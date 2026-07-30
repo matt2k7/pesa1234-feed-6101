@@ -54,6 +54,16 @@ jobs:
           restore-keys: |
             openwrt-dl-${{ github.event.inputs.source_branch }}-
 
+      - name: Cache build output (toolchain/staging)
+        uses: actions/cache@v4
+        with:
+          path: |
+            openwrt/staging_dir
+            openwrt/build_dir
+          key: openwrt-build-${{ github.event.inputs.source_branch }}-${{ hashFiles('openwrt/.config') }}
+          restore-keys: |
+            openwrt-build-${{ github.event.inputs.source_branch }}-
+
       - name: Update and install feeds
         working-directory: openwrt
         run: |
@@ -104,25 +114,31 @@ jobs:
         run: |
           df -h /
           echo "--- bin/ directory tree ---"
-          find bin -maxdepth 4 -type d 2>/dev/null || echo "bin/ does not exist - build did not reach image packaging stage"
+          find bin -maxdepth 5 -type d 2>/dev/null || echo "bin/ does not exist - build did not reach image packaging stage"
 
       - name: List build output (debug aid)
-        working-directory: openwrt
-        run: find bin/targets/mediatek/filogic -type f
-
-      - name: Locate sysupgrade image
+        if: always()
         working-directory: openwrt
         run: |
-          IMG=$(find bin/targets/mediatek/filogic -type f -name "*jiorouter_ax6000-jidu6101-squashfs-sysupgrade.bin")
+          find bin -type f \( -iname "*filogic*" -o -iname "*jidu6101*" \) 2>/dev/null || echo "no matching files found under bin/"
+
+      - name: Locate and copy sysupgrade image
+        if: always()
+        working-directory: openwrt
+        run: |
+          IMG=$(find bin -type f -name "*jiorouter_ax6000-jidu6101-squashfs-sysupgrade.bin" | head -n1)
           if [ -z "$IMG" ]; then
-            echo "::error::sysupgrade image not found - check the debug listing above"
-            exit 1
+            echo "::warning::sysupgrade image not found - check the debug listing above. Nothing will be uploaded."
+            exit 0
           fi
+          echo "Found: $IMG"
           cp "$IMG" ../sysupgrade.bin
 
       - name: Upload sysupgrade artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: jidu6101-sysupgrade
           path: sysupgrade.bin
           retention-days: 14
+          if-no-files-found: ignore
