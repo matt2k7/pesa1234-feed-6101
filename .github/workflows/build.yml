@@ -20,7 +20,7 @@ jobs:
           
       - name: Clone pesa1234/openwrt
         run: |
-          git clone --depth 1 -branch "${{ github.event.inputs.source_branch }}" \
+          git clone --depth 1 -b "${{ github.event.inputs.source_branch }}" \
           https://github.com/pesa1234/openwrt.git
           
       - name: Update and install feeds
@@ -39,6 +39,10 @@ jobs:
           CONFIG_PACKAGE_htop=y
           CONFIG_PACKAGE_nano=y
           CONFIG_PACKAGE_librespeed-go=y
+          CONFIG_PACKAGE_vnstat2=y
+          CONFIG_PACKAGE_luci-app-vnstat2=y
+          CONFIG_PACKAGE_internet-detector=y
+          CONFIG_PACKAGE_luci-app-internet-detector=y
           EOF
           make defconfig
           
