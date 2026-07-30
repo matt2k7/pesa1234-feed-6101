@@ -43,6 +43,11 @@ jobs:
           CONFIG_PACKAGE_luci-app-vnstat2=y
           CONFIG_PACKAGE_internet-detector=y
           CONFIG_PACKAGE_luci-app-internet-detector=y
+          
+          # Fix for the EDCCA / hostapd compilation error
+          CONFIG_PACKAGE_wpad-openssl=y
+          # CONFIG_PACKAGE_wpad-basic-mbedtls is not set
+          # CONFIG_PACKAGE_wpad-basic-wolfssl is not set
           EOF
           make defconfig
           
