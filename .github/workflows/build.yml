@@ -84,12 +84,26 @@ jobs:
           CONFIG_PACKAGE_librespeed-go=y
           CONFIG_PACKAGE_vnstat2=y
           CONFIG_PACKAGE_luci-app-vnstat2=y
-          CONFIG_PACKAGE_internet-detector=y
-          CONFIG_PACKAGE_luci-app-internet-detector=y
+
+          # From pesa1234's own .config - this is the package that provides
+          # the Advanced tab (WED/EDCCA/RSS/iBF/TWT settings) in LuCI wireless
+          # settings. Not pulled in automatically by CONFIG_PACKAGE_luci=y.
+          CONFIG_PACKAGE_luci-app-advanced=y
+
+          # Close matches from his config that support/relate to the above:
+          # wireless info reporting used by rpcd/ubus - likely queried by
+          # luci-app-advanced's capability checks
+          CONFIG_PACKAGE_rpcd-mod-iwinfo=y
+          CONFIG_PACKAGE_iwinfo=y
+          # MediaTek HNAT hardware-offload utility - directly relevant to
+          # the WED/PPE offload path discussed elsewhere in this build
+          CONFIG_PACKAGE_mtkhnat_util=y
+          # MediaTek bridge acceleration, present in his config
+          CONFIG_PACKAGE_bridger=y
 
           # Required: EDCCA patch on this branch only compiles against the
-          # full hostapd build, not wpad-basic-*. See build log from
-          # 2026-07 for the edcca_mode_str implicit-declaration failure.
+          # full hostapd build, not wpad-basic-*. Confirmed against
+          # pesa1234's own .config, which sets this the same way.
           CONFIG_PACKAGE_wpad-openssl=y
           # CONFIG_PACKAGE_wpad-basic-mbedtls is not set
           # CONFIG_PACKAGE_wpad-basic-wolfssl is not set
