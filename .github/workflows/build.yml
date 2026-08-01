@@ -84,6 +84,8 @@ jobs:
           CONFIG_PACKAGE_librespeed-go=y
           CONFIG_PACKAGE_vnstat2=y
           CONFIG_PACKAGE_luci-app-vnstat2=y
+          CONFIG_PACKAGE_irqbalance=y
+          CONFIG_PACKAGE_luci-app-irqbalance=y
 
           # From pesa1234's own .config - this is the package that provides
           # the Advanced tab (WED/EDCCA/RSS/iBF/TWT settings) in LuCI wireless
